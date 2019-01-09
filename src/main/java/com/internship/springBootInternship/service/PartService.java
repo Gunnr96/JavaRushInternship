@@ -15,6 +15,9 @@ import java.util.List;
 @Transactional
 public class PartService {
 
+    @Resource(name = "sessionFactory")
+    private SessionFactory sessionFactory;
+
     public SessionFactory getSessionFactory() {
         return sessionFactory;
     }
@@ -23,12 +26,17 @@ public class PartService {
         this.sessionFactory = sessionFactory;
     }
 
-    @Resource(name = "sessionFactory")
-    private SessionFactory sessionFactory;
+    public List<Part> getPage(int page) {
+        Session session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
+        Query query = session.createQuery("FROM Part LIMIT 10 OFFSET " + (page - 1));
+        return query.list();
+    }
 
     public List<Part> getAll() {
         Session session = sessionFactory.getCurrentSession();
-        Query query = session.createQuery("FROM part");
+        session.beginTransaction();
+        Query query = session.createQuery("FROM Part");
         return query.list();
     }
 }

@@ -6,20 +6,22 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.JstlView;
+import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
 @Configuration
 @EnableWebMvc
 public class MvcConfiguration implements WebMvcConfigurer {
     @Bean
-    public ViewResolver getViewResolver() {
-        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+    public UrlBasedViewResolver viewResolver() {
+        UrlBasedViewResolver resolver
+                = new UrlBasedViewResolver();
         resolver.setPrefix("/WEB-INF/jsp/");
         resolver.setSuffix(".jsp");
+        resolver.setViewClass(JstlView.class);
         return resolver;
     }
 
@@ -29,12 +31,11 @@ public class MvcConfiguration implements WebMvcConfigurer {
                 .configure()
                 .build();
 
+
         try {
             return new MetadataSources(registry).buildMetadata().buildSessionFactory();
         }
         catch (Exception e) {
-            // The registry would be destroyed by the SessionFactory, but we had trouble building the SessionFactory
-            // so destroy it manually.
             StandardServiceRegistryBuilder.destroy(registry);
             e.printStackTrace();
             throw e;
