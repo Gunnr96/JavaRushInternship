@@ -104,7 +104,9 @@
                    </a>
                 </td>
              </tr>
-           </c:forEach>
+          </c:forEach>
+              <tr class = "blank_row"><td colspan = "5"></td></tr>
+              <tr><td>Можно собрать компьютеров</td><td>${completeMachines}</td></tr>
         </tbody>
     </table>
     </div>

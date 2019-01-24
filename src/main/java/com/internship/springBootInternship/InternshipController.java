@@ -12,6 +12,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.util.List;
+
 
 @Controller
 @RequestMapping("/")
@@ -37,6 +39,7 @@ public class InternshipController {
             model.addObject("page", page);
             model.addObject("pagesNum", partService.getNumberOfPages(filter));
             model.addObject("filter", filter);
+            model.addObject("completeMachines", getCompleteMachines());
         return model;
     }
 
@@ -75,13 +78,19 @@ public class InternshipController {
     }
 
     @GetMapping("/search")
-    public ModelAndView search(@RequestParam(value="query") String query) {
+    public ModelAndView search(@RequestParam(value="query", required = false, defaultValue = "") String query) {
         ModelAndView model = new ModelAndView("helloPage");
 
-        model.addObject("list", partService.getByName(query));
+        if (!query.equals("")) {
+            model.addObject("list", partService.getByName(query));
+        } else {
+            return new ModelAndView("redirect://localhost:8080");
+        }
         model.addObject("page", 1);
         model.addObject("pagesNum", 1);
         model.addObject("filter", "all");
+        model.addObject("completeMachines", getCompleteMachines());
+
         return model;
     }
 
@@ -100,5 +109,10 @@ public class InternshipController {
         toAdd.setAmount(amount);
         partService.editPart(toAdd);
         return new RedirectView("//localhost:8080");
+    }
+
+    private int getCompleteMachines() {
+        List<Part> necessaryParts = partService.getNecessary();
+        return necessaryParts.stream().mapToInt(Part::getAmount).min().orElse(0);
     }
 }

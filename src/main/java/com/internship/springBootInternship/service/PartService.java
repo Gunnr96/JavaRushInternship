@@ -201,4 +201,27 @@ public class PartService {
             }
         }
     }
+
+    public List<Part> getNecessary() {
+        Session session = null;
+        Transaction transaction = null;
+
+        try {
+            session = sessionFactory.getCurrentSession();
+            transaction = session.beginTransaction();
+
+            Query query = session.createQuery("FROM Part WHERE IsNecessary = 1");
+            return query.list();
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return new ArrayList<>();
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+    }
 }
