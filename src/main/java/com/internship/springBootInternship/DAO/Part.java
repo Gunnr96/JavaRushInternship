@@ -51,4 +51,14 @@ public class Part {
     public void setPartName(String partName) {
         this.partName = partName;
     }
+
+    @Override
+    public String toString() {
+        return "Part{" +
+                "id=" + id +
+                ", amount=" + amount +
+                ", isNecessary=" + isNecessary +
+                ", partName='" + partName + '\'' +
+                '}';
+    }
 }
